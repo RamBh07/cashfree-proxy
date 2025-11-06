@@ -11,10 +11,7 @@ app.use(express.json());
 
 
 // ✅ Use sandbox or production based on environment
-const CF_BASE =
-  process.env.NODE_ENV === "production"
-    ? "https://api.cashfree.com/pg"
-    : "https://sandbox.cashfree.com/pg";
+const CF_BASE ="https://sandbox.cashfree.com/pg";
 
 const CF_API_VERSION = "2022-09-01"; // Recommended stable API version
 
