@@ -54,7 +54,8 @@ app.post("/create-order", async (req: express.Request , res: express.Response) =
         customer_phone: customer.phone,
       },
    order_meta: {
-  return_url: "shopymart://payments/cashfree-return?order_id={order_id}",
+  return_url: "https://cashfree-proxy-production.up.railway.app/redirect?order_id={order_id}&order_status={order_status}",
+
   notify_url: "https://cashfree-proxy-production.up.railway.app/cashfree-webhook"
 }
 
@@ -93,6 +94,30 @@ app.post("/create-order", async (req: express.Request , res: express.Response) =
     console.error("❌ Error creating Cashfree order:", error);
     res.status(500).json({ error: "Failed to create Cashfree order" });
   }
+});
+
+
+app.get("/redirect", (req, res) => {
+  const { order_id, order_status } = req.query;
+
+  // Build your deep link
+  const deepLink = `shopymart://payments/cashfree-return?order_id=${order_id}&order_status=${order_status}`;
+
+  // Respond with a simple HTML redirect page
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="refresh" content="0; url='${deepLink}'" />
+        <script>
+          window.location.href = "${deepLink}";
+        </script>
+      </head>
+      <body>
+        <p>Redirecting to app...</p>
+      </body>
+    </html>
+  `);
 });
 
 
