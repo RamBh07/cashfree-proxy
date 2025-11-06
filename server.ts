@@ -95,6 +95,50 @@ app.post("/create-order", async (req: express.Request , res: express.Response) =
   }
 });
 
+
+app.get("/verify-order/:order_id", async (req, res) => {
+  try {
+    const { order_id } = req.params;
+
+    const response = await fetch(`${CF_BASE}/orders/${order_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-client-id": CF_APP_ID,
+        "x-client-secret": CF_SECRET,
+        "x-api-version": CF_API_VERSION,
+      },
+    });
+
+    const data = (await response.json()) as {
+      order_id: string;
+      order_status: string;
+      order_amount: number;
+      [key: string]: any;
+    };
+
+    console.log("🔍 Cashfree Order Verification:", JSON.stringify(data, null, 2));
+
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+
+    const paymentStatus = data.order_status || "UNKNOWN";
+
+    res.json({
+      success: true,
+      order_id,
+      status: paymentStatus,
+      details: data,
+    });
+  } catch (error) {
+    console.error("❌ Order Verification Error:", error);
+    res.status(500).json({ success: false, message: "Order verification failed" });
+  }
+});
+
+
+
 // 🪝 Optional Webhook endpoint
 app.post("/cashfree-webhook", (req: express.Request, res: express.Response) => {
   console.log("🔔 Webhook received:", req.body);
