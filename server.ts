@@ -56,11 +56,11 @@ app.post("/create-order", async (req: express.Request , res: express.Response) =
         customer_email: customer.email,
         customer_phone: customer.phone,
       },
-      order_meta: {
-        return_url: "shopymart://payments/cashfree-return?order_id={order_id}",
-        notify_url:
-          "https://orthostyle-untranscended-nila.ngrok-free.dev/cashfree-webhook",
-      },
+   order_meta: {
+  return_url: "shopymart://payments/cashfree-return?order_id={order_id}",
+  notify_url: "https://cashfree-proxy-production.up.railway.app/cashfree-webhook"
+}
+
     };
 
     console.log("➡️ Creating Cashfree order...");
